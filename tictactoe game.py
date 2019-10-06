@@ -45,7 +45,7 @@ def draw_lines():
     pygame.draw.line(screen, lineColor, (margin, margin + (gameSize // 3) * 2),
                      (screenSize - margin, margin + (gameSize // 3) * 2), lineSize)
 
-def minimax(state, depth, player):#ِplayers:(Ai: +1 & human: -1) #best move selector function.
+def minimax(state, depth, alpha=-float('inf'), beta=float('inf'), player=+1):#ِplayers:(Ai: +1 & human: -1) #best move selector function.
     best = [-1,-1, -float("inf")] if player== +1 else [-1,-1, +float("inf")] #<<human
     wins  =(((0,0),(0,1),(0,2)),((1,0),(1,1),(1,2)),((2,0),(2,1),(2,2)),((0,0),(1,0),(2,0)),((0,1),(1,1),(2,1)),((0,2),(1,2),(2,2)),((0,0),(1,1),(2,2)),((0,2),(1,1),(2,0))) #wining combinations
     empties = [(i,j) for i in range(3) for j in range(3) if state[i][j]==None] #empty cells 
@@ -56,11 +56,18 @@ def minimax(state, depth, player):#ِplayers:(Ai: +1 & human: -1) #best move sel
         return [-1,-1, evaluate]
     for row,col in empties: 
         state[row][col] = player
-        score = minimax(state, depth - 1, -player) #recursion core
+        score = minimax(state, depth-1, alpha, beta, -player) #recursion core
         state[row][col] = None
         score[0],score[1] = row, col 
-        if player == +1: best = score if score[2] > best[2] else best  #maximizing
-        else:            best = score if score[2] < best[2] else best  #minimizing
+        if player == +1:
+            best = score if score[2] > best[2] else best  #maximizing
+            alpha = max(alpha, best[2]) 
+            if alpha >= beta:break 
+        else:
+            best = score if score[2] < best[2] else best  #minimizing
+
+            beta = min(beta, best[2]) 
+            if alpha >= beta:break  
     return best
 screenSize = 400
 margin = 35
@@ -135,7 +142,8 @@ while True:
                         screen.blit(text_surface2, (0.5*screenSize-0.5*size2[0], screenSize // 2 - screenSize // 10+100))
 
         elif currentMove == oMark:
-            raw = minimax(board, len([(i,j) for i in range(3) for j in range(3) if board[i][j]==None]), +1)
+            raw = minimax(board, len([(i,j) for i in range(3) for j in range(3) if board[i][j]==None]))
+            print(raw)
             (row, column) = raw[:2]
             if board[row][column] is None:
                 board[row][column] = +1
