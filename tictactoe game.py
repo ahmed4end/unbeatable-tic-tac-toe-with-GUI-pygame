@@ -1,7 +1,7 @@
 import pygame
 import sys
 import os
-
+import time
 
 def map_mouse_to_board(x, y):
     if x < gameSize / 3 + margin: column = 0
@@ -11,7 +11,13 @@ def map_mouse_to_board(x, y):
     elif gameSize / 3 + margin <= y < (gameSize / 3) * 2 + margin:row = 1
     else:row = 2
     return row, column
-o_img, x_img = pygame.image.load('o.png'),pygame.image.load('x.png')
+try:
+	o_img, x_img = pygame.image.load('o.png'),pygame.image.load('x.png')
+except:
+	from time import sleep
+	print("there is missing files related to the game (o.png, x.png) please replace them at same directory as the game is.")
+	sleep(10)
+	sys.exit()
 
 def draw_board(board):
     for y in range(3):
@@ -33,8 +39,6 @@ def get_winner(board):
     return None
 def draw_lines():
     # Vertical lines
-    
-
     pygame.draw.line(screen, lineColor, (margin + gameSize // 3, margin),
                      (margin + gameSize // 3, screenSize - margin), lineSize)
     pygame.draw.line(screen, lineColor, (margin + (gameSize // 3) * 2, margin),
@@ -120,7 +124,10 @@ while True:
                 draw_board(board)
                 winner = get_winner(board)
                 if winner is not None:
-                    screen.fill(backgroundColor)
+                    s = pygame.Surface((400,400))  
+                    s.set_alpha(230)           
+                    s.fill((0,0,0))       
+                    screen.blit(s, (0,0))
                     myFont = pygame.font.SysFont('Verdana', 50)
                     myFont2 = pygame.font.SysFont('Verdana', 20)
                     text_surface = myFont.render("You won!", False, lineColor)
@@ -132,7 +139,10 @@ while True:
                 else:
                     if is_full(board):
                         currentMove = 0
-                        screen.fill(backgroundColor)
+                        s = pygame.Surface((400,400))  
+                        s.set_alpha(230)           
+                        s.fill((0,0,0))       
+                        screen.blit(s, (0,0))
                         myFont = pygame.font.SysFont('Verdana', 50)
                         myFont2 = pygame.font.SysFont('Verdana', 20)
                         text_surface = myFont.render("Draw!", False, lineColor)
@@ -143,7 +153,6 @@ while True:
 
         elif currentMove == oMark:
             raw = minimax(board, len([(i,j) for i in range(3) for j in range(3) if board[i][j]==None]))
-            print(raw)
             (row, column) = raw[:2]
             if board[row][column] is None:
                 board[row][column] = +1
@@ -154,7 +163,10 @@ while True:
                 draw_board(board)
                 winner = get_winner(board)
                 if winner is not None:
-                    screen.fill(backgroundColor)
+                    s = pygame.Surface((400,400))  
+                    s.set_alpha(230)           
+                    s.fill((0,0,0))       
+                    screen.blit(s, (0,0))
                     myFont = pygame.font.SysFont('Verdana', 50)
                     myFont2 = pygame.font.SysFont('Verdana', 20)
                     text_surface = myFont.render("Computer won!", False, lineColor)
@@ -166,7 +178,10 @@ while True:
                 else:
                     if is_full(board):
                         currentMove = 0
-                        screen.fill(backgroundColor)
+                        s = pygame.Surface((400,400))  
+                        s.set_alpha(230)           
+                        s.fill((0,0,0))       
+                        screen.blit(s, (0,0))
                         myFont = pygame.font.SysFont('Verdana', 50)
                         myFont2 = pygame.font.SysFont('Verdana', 20)
                         text_surface = myFont.render("Draw!", False, lineColor)
